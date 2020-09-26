@@ -49,6 +49,7 @@ public class MessageController {
 
     @DeleteMapping("{id}")
     public void delete(@PathVariable("id") Message message) {
+        List<Message> list = messageRepo.findAll();
         messageRepo.delete(message);
     }
 }
