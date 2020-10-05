@@ -1,8 +1,11 @@
 package com.dreadblade.lightair.controller;
 
 import com.dreadblade.lightair.domain.User;
+import com.dreadblade.lightair.domain.Views;
 import com.dreadblade.lightair.repo.MessageRepo;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,24 +19,31 @@ import java.util.HashMap;
 @Controller
 @RequestMapping("/")
 public class MainController {
-
     private final MessageRepo messageRepo;
 
     @Value("${spring.profiles.active}")
     private String profile;
+    private final ObjectWriter writer;
 
     @Autowired
-    public MainController(MessageRepo messageRepo) {
+    public MainController(MessageRepo messageRepo, ObjectMapper mapper) {
         this.messageRepo = messageRepo;
+        this.writer = mapper
+                .setConfig(mapper.getSerializationConfig())
+                .writerWithView(Views.FullMessage.class);
     }
 
     @GetMapping
-    public String main(Model model, @AuthenticationPrincipal User user) {
+    public String main(@AuthenticationPrincipal User user,
+                       Model model) throws JsonProcessingException {
+        
         HashMap<Object, Object> data = new HashMap<>();
 
         if (user != null) {
             data.put("profile", user);
-            data.put("messages", messageRepo.findAll());
+
+            String messages = writer.writeValueAsString(messageRepo.findAll());
+            model.addAttribute("messages", messages);
         }
 
         model.addAttribute("frontendData", data);

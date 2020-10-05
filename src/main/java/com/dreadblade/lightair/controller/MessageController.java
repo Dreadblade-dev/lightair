@@ -1,6 +1,7 @@
 package com.dreadblade.lightair.controller;
 
 import com.dreadblade.lightair.domain.Message;
+import com.dreadblade.lightair.domain.User;
 import com.dreadblade.lightair.domain.Views;
 import com.dreadblade.lightair.dto.EventType;
 import com.dreadblade.lightair.dto.MetaDto;
@@ -14,6 +15,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -54,9 +56,11 @@ public class MessageController {
     }
 
     @PostMapping
-    public Message create(@RequestBody Message message) throws IOException {
+    public Message create(@RequestBody Message message,
+                          @AuthenticationPrincipal User user) throws IOException {
         message.setCreationDate(LocalDateTime.now());
         fillMeta(message);
+        message.setAuthor(user);
         Message updatedMessage = messageRepo.save(message);
 
         wsSender.accept(EventType.CREATE, updatedMessage);
@@ -67,9 +71,8 @@ public class MessageController {
     @PutMapping("{id}")
     public Message update(@PathVariable("id") Message messageFromDb,
                           @RequestBody Message message) throws IOException {
-
         BeanUtils.copyProperties(message, messageFromDb, "id");
-        fillMeta(message);
+        fillMeta(messageFromDb);
         Message updatedMessage = messageRepo.save(messageFromDb);
 
         wsSender.accept(EventType.UPDATE, updatedMessage);

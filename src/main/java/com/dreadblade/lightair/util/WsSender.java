@@ -25,6 +25,7 @@ public class WsSender {
         ObjectWriter writer = mapper
                 .setConfig(mapper.getSerializationConfig())
                 .writerWithView(view);
+
         return (EventType eventType, T payload) -> {
             String value = null;
             try {

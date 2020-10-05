@@ -11,11 +11,12 @@
     <title>LightAir</title>
     <!-- версия для разработки, отображает полезные предупреждения в консоли -->
     <script th:inline="javascript">
-        let frontendData = [[${frontendData}]]
+        let frontendData = [[${frontendData}]];
+        let messages = JSON.parse([[${messages}]]);
     </script>
 </head>
 <body>
-<div id="app">{{ message }}</div>
+<div id="app"></div>
 <script th:src="${isDevMode} ? 'http://localhost:8000/main.js' : '/js/main.js'"></script>
 </body>
 </html>

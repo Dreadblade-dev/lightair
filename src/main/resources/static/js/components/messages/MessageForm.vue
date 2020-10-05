@@ -1,7 +1,13 @@
 <template>
     <v-layout row>
-        <v-text-field label="New message" placeholder="What's new?" v-model="text" />
-        <v-btn @click="save" large style="margin-left: 10px; margin-top: 5px;">Save</v-btn>
+        <v-text-field label="New message"
+                      placeholder="What's new?"
+                      v-model="text"
+                      @keyup.enter="save" />
+
+        <v-btn @click="save" large style="margin-left: 10px; margin-top: 5px;">
+            Save
+        </v-btn>
     </v-layout>
 </template>
 

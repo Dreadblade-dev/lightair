@@ -3,7 +3,7 @@
         <v-container>
         <v-app-bar app>
             <v-toolbar-title>LightAir</v-toolbar-title>
-            <v-btn v-if="profile" :disabled="$route.path === '/'" text @click="showMessages">
+            <v-btn v-if="profile" :disabled="$route.path === '/'" text @click="showMessages" class="ml-3">
                 Messages
             </v-btn>
             <v-spacer></v-spacer>
@@ -25,11 +25,8 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { addHandler } from "../util/ws";
+import { addHandler } from "util/ws";
 export default {
-    components: {
-        //MessagesList,
-    },
     computed: mapState(['profile']),
     methods: {
         ...mapMutations(['addMessageMutation', 'updateMessageMutation', 'removeMessageMutation']),
@@ -54,10 +51,10 @@ export default {
                         this.removeMessageMutation(data.body)
                         break
                     default:
-                        console.error(`Looks like eventType is unknown ${data.eventType}`)
+                        console.error(`Looks like eventType is unknown "${data.eventType}"`)
                 }
             } else {
-                console.error(`Looks like objectType is unknown ${data.objectType}`)
+                console.error(`Looks like objectType is unknown "${data.objectType}"`)
             }
         })
     },

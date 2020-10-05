@@ -1,10 +1,10 @@
 import Vue from 'vue'
-import Vuetify from "vuetify";
+import Vuetify from "vuetify"
 import '@babel/polyfill'
 import 'api/resource'
 import router from 'router/router'
 import App from 'pages/App.vue'
-import store from "./store/store";
+import store from "store/store"
 import { connect } from "./util/ws"
 
 if (frontendData.profile) {
