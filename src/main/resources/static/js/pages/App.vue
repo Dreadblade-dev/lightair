@@ -8,7 +8,7 @@
             </v-btn>
             <v-spacer></v-spacer>
 
-            <v-btn v-if="profile" :disabled="$route.path === '/profile'" text @click="showProfile">
+            <v-btn v-if="profile" :disabled="$route.path === '/user'" text @click="showProfile">
                 {{profile.name}}
             </v-btn>
             <v-btn icon href="/logout" v-if="profile">
@@ -39,7 +39,7 @@ export default {
             this.$router.push('/')
         },
         showProfile() {
-            this.$router.push('/profile')
+            this.$router.push('/user')
         }
     },
     created() {
