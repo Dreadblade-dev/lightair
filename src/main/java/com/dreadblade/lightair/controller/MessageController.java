@@ -43,20 +43,26 @@ public class MessageController {
     }
 
     @PostMapping
+    @JsonView(Views.FullMessage.class)
     public Message create(@RequestBody Message message,
                           @AuthenticationPrincipal User user) throws IOException {
         return messageService.create(message, user);
     }
 
     @PutMapping("{id}")
-    public Message update(@PathVariable("id") Message messageFromDb,
-                          @RequestBody Message message) throws IOException {
-        return messageService.update(messageFromDb, message);
+    @JsonView(Views.FullMessage.class)
+    public Message update(
+            @AuthenticationPrincipal User user,
+            @PathVariable("id") Message messageFromDb,
+            @RequestBody Message message) throws IOException {
+        return messageService.update(messageFromDb, message, user);
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable("id") Message message) {
-        messageService.delete(message);
+    public void delete(
+            @AuthenticationPrincipal User user,
+            @PathVariable("id") Message message) {
+            messageService.delete(message, user);
     }
 
 

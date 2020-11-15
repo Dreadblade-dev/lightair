@@ -15,7 +15,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,7 +44,7 @@ public class MessageService {
     public MessageService(MessageRepo messageRepo, UserSubscriptionRepo userSubscriptionRepo, WsSender wsSender) {
         this.messageRepo = messageRepo;
         this.userSubscriptionRepo = userSubscriptionRepo;
-        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.IdName.class);
+        this.wsSender = wsSender.getSender(ObjectType.MESSAGE, Views.FullMessage.class);
     }
 
     private void fillMeta(Message message) throws IOException {
@@ -86,17 +85,24 @@ public class MessageService {
         return element == null ? "" : element.attr("content");
     }
 
-    public void delete(Message message) {
-        messageRepo.delete(message);
-        wsSender.accept(EventType.REMOVE, message);
+    public void delete(Message message, User user) {
+        if (user.equals(message.getAuthor())) {
+            messageRepo.delete(message);
+            wsSender.accept(EventType.REMOVE, message);
+        }
+
     }
 
-    public Message update(Message messageFromDb, Message message) throws IOException {
-        BeanUtils.copyProperties(message, messageFromDb, "id");
-        fillMeta(messageFromDb);
-        Message updatedMessage = messageRepo.save(messageFromDb);
+    public Message update(Message messageFromDb, Message message, User user) throws IOException {
+        Message updatedMessage = messageFromDb;
+        if (messageFromDb.getAuthor().equals(user)) {
+            messageFromDb.setText(message.getText());
+            fillMeta(messageFromDb);
+            updatedMessage = messageRepo.save(messageFromDb);
 
-        wsSender.accept(EventType.UPDATE, updatedMessage);
+            wsSender.accept(EventType.UPDATE, updatedMessage);
+        }
+
         return updatedMessage;
     }
 

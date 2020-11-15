@@ -21,7 +21,7 @@
             </v-icon>
         </v-avatar>
         <span class="ml-2">
-                    {{ userName }}
+                    {{userName }}
         </span>
     </router-link>
 </template>
